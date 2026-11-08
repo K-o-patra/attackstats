@@ -67,6 +67,9 @@
         top: 16px;
         min-width: 0;
       }
+      .narrow {
+        display: none;
+      }
       @media (max-width: 980px) {
         .page {
           display: flex;
@@ -79,6 +82,12 @@
         }
         main {
           display: contents;
+        }
+        .wide {
+          display: none;
+        }
+        .narrow {
+          display: inline;
         }
         aside {
           position: static;
@@ -475,7 +484,7 @@
           counted by hand. This page shows what happened to those attacks: did
           they win the point, did the other team defend them, or did they go
           out? Use the filter to look at a single set, country, team or player.
-          The ranking on the right compares the teams. All terms are explained
+          The ranking <span class="wide">on the right</span><span class="narrow">further down</span> compares the teams. All terms are explained
           in <a href="#defs">Definitions</a> at the bottom.
         </p>
       </header>
