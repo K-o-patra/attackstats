@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beach Volleyball Attack Stats</title>
+<style>
+:root{color-scheme:light;--bg:#f6f6f4;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--grid:#e3e2de;--hl:#ecebe6;
+--points:#2a78d6;--digs:#1baf7a;--out:#eb6834;--other:#b9b8b2;--block:#6250d6}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#111110;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#34332f;--hl:#26261f;
+--points:#3987e5;--digs:#199e70;--out:#d95926;--other:#6d6c66;--block:#9085e9}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,sans-serif}
+.page{max-width:1280px;margin:0 auto;padding:28px 16px 60px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+header{grid-column:1/-1}main{min-width:0}
+aside{position:sticky;top:16px;min-width:0}
+@media(max-width:980px){.page{grid-template-columns:minmax(0,1fr)}aside{position:static}}
+h1{font-size:22px;margin:0}.sub{color:var(--ink2);margin:4px 0 0}
+.intro{margin:10px 0 0;max-width:75ch}
+.card{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:14px 16px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.card{margin-bottom:16px}h2{font-size:15px;margin:0 0 4px}.hint{color:var(--ink2);font-size:13px;margin:0 0 14px}
+.bar{display:flex;gap:2px;height:44px}.bar div{border-radius:4px;min-width:2px}
+.bar div:hover{outline:2px solid var(--ink)}
+.lab{display:flex;gap:2px;margin-top:6px;font-size:12.5px;color:var(--ink2)}.lab div{overflow:hidden;white-space:nowrap}
+.pie{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+#pie{width:220px;height:220px;flex:none}#pie path,#pie circle{stroke:var(--surface);stroke-width:.02;cursor:default}#pie path:hover,#pie circle:hover{opacity:.85}
+.plegend{flex:1 1 300px;display:grid;grid-template-columns:auto auto 1fr;gap:2px 14px;font-size:14px;align-items:baseline}
+.plegend .tot{grid-column:1/-1;padding-bottom:8px;margin-bottom:6px;border-bottom:1px solid var(--grid)}
+.plegend .nm{font-weight:600}.plegend .d{grid-column:1/-1;color:var(--ink2);font-size:13px;padding-left:16px;margin-bottom:8px}.plegend .tot .d{padding:0;margin:0}
+.plegend .v{font-weight:650;font-variant-numeric:tabular-nums;text-align:right}.plegend .c{color:var(--ink2);font-size:12.5px;font-variant-numeric:tabular-nums}
+@media(max-width:520px){#pie{width:180px;height:180px;margin:0 auto}.pie{justify-content:center}}
+.meter{height:14px;background:var(--grid);border-radius:4px;overflow:hidden}.meter div{height:100%;border-radius:4px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--grid)}th:first-child,td:first-child{text-align:left}
+button{font:inherit;background:none;color:var(--ink2);border:1px solid var(--grid);border-radius:6px;padding:3px 10px;cursor:pointer}
+h2 button{margin-left:8px}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:6px;font-size:13px;display:none;z-index:9;max-width:320px}
+.fold{display:none}
+.frow{display:grid;grid-template-columns:72px 1fr;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--grid)}
+.frow:first-of-type{border-top:0}.fl{color:var(--ink2);font-size:13px;padding-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{margin:0;font-size:13px;color:var(--ink);padding:3px 9px;border-radius:999px}
+.chip small{color:var(--ink2);margin-left:5px;font-variant-numeric:tabular-nums}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}.chip.on small{color:var(--bg);opacity:.75}
+.chip:disabled{opacity:.35;cursor:default}
+.fhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.def{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.def .n{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}.def .l{color:var(--ink2);font-size:13px;margin-bottom:6px}
+dl{margin:0;display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 16px;font-size:14px}dt{font-weight:600}dd{margin:0;color:var(--ink2)}
+@media(max-width:520px){.frow,dl{grid-template-columns:1fr}.fl{padding-top:0}dd{margin-bottom:6px}}
+.seg{display:flex;border:1px solid var(--grid);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.seg button{flex:1;border:0;border-radius:0;margin:0;padding:6px 4px;font-size:13px;color:var(--ink2)}
+.seg button+button{border-left:1px solid var(--grid)}.seg button.on{background:var(--ink);color:var(--bg)}
+.rk{list-style:none;margin:0;padding:0}
+.rk li{display:grid;grid-template-columns:22px 1fr auto;gap:2px 8px;align-items:center;padding:7px 6px;border-radius:6px;cursor:pointer}
+.rk li:hover{background:var(--hl)}.rk li.on{background:var(--hl);outline:1px solid var(--ink2)}
+.rk .p{color:var(--ink2);font-size:13px;font-variant-numeric:tabular-nums}.rk .t{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk .v{font-weight:650;font-variant-numeric:tabular-nums;font-size:14px}
+.rk .m{grid-column:2/4;display:flex;align-items:center;gap:8px}.rk .m .meter{flex:1;height:8px}.rk .m span{color:var(--ink2);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+</style></head><body><div class="page">
+<header>
+<h1 id="h1">Attack outcomes – global</h1>
+<p class="sub" id="sub"></p>
+<p class="intro">Every attack in these professional beach volleyball matches was counted by hand. This page shows what happened to those attacks: did they win the point, did the other team defend them, or did they go out? Use the filter to look at a single set, country, team or player. The ranking on the right compares the teams. All terms are explained in <a href="#defs">Definitions</a> at the bottom.</p>
+</header>
+<main>
+<section class="card"><div class="fhead" id="fhead"><div><h2 style="display:inline">Filter</h2> <span class="hint" id="fsum"></span></div><div style="white-space:nowrap"><button id="reset">reset</button> <button id="ftgl" aria-expanded="false">show filters</button></div></div>
+<div id="fbody" class="fold" style="margin-top:10px"><p class="hint" style="margin-bottom:6px">Click to select, click again to remove. Several choices in one row are combined with “or” (Set 1 or Set 2). Choices in different rows are combined with “and” (Set 1 and Team X). The small number on each chip is the number of attacks you would see if you selected it. Greyed-out chips have no data together with your current selection.</p>
+<div id="filters"></div></div></section>
+
+<section class="card"><h2 id="pieh">What happens to an attack?</h2>
+<p class="hint" id="barhint"></p>
+<div class="pie"><svg id="pie" viewBox="-1.02 -1.02 2.04 2.04" role="img" aria-label="Pie chart of attack outcomes"></svg><div id="legend" class="plegend"></div></div></section>
+<section class="card"><h2>Attacks touched by a block</h2>
+<p class="hint">How often the opposing blocker got a hand on the attack. This is shown separately because a block touch can end in any of the outcomes above: the ball can still go out off the block for a point, be dug, or be blocked straight down. That is why the block share is not part of the 100% pie chart.</p>
+<div class="meter"><div id="blk" style="background:var(--block)"></div></div><p id="blkt" class="hint" style="margin:8px 0 0"></p></section>
+<section class="card"><h2>Defense of the selection</h2>
+<p class="hint" id="defhint"></p><div class="def" id="def"></div></section>
+<section class="card"><h2>Table view<button class="tg" data-f="tbl">show</button></h2><div id="tbl" class="fold"></div></section>
+<section class="card" id="defs"><h2>Definitions</h2>
+<p class="hint">How the numbers are counted.</p>
+<dl>
+<dt>Attack</dt><dd>A team's attempt to win the rally with an attacking hit over the net, e.g. a hard spike or a placed shot. Each attack counts once.</dd>
+<dt><span class="sw" style="background:var(--points)"></span>Point</dt><dd>The attack won the rally directly: the ball landed in the court, the defense could not keep it in play, or it went out off the block.</dd>
+<dt><span class="sw" style="background:var(--digs)"></span>Dug (controlled)</dt><dd>A “dig” is the defensive save of an attack, usually with the forearms. “Controlled” means the defenders saved it well enough to continue their own play (set and counter-attack). A desperate touch that just keeps the ball alive does not count as controlled.</dd>
+<dt><span class="sw" style="background:var(--out)"></span>Out</dt><dd>The attacker hit the ball outside the court without a block touch, losing the rally.</dd>
+<dt><span class="sw" style="background:var(--other)"></span>Other outcome</dt><dd>Everything that is not a point, a controlled dig or out. Examples: the ball was blocked straight back down (a point for the defense), deflected by the block and played on, or dug in an uncontrolled way. This value is calculated as the remainder and not counted directly.</dd>
+<dt><span class="sw" style="background:var(--block)"></span>Block touch</dt><dd>A block touch means the blocker clearly touched the attack. Very slight touches that don't change anything are not counted; this is the judgement of the person who counted the matches. If the attacker deliberately hits the ball off the blocker's hands so that it goes out, that is not counted as a block either. The aim is to count only blocks that had a real chance to win the point directly, or to keep the ball in play as a soft block. The outcome after the touch can still be anything, so it is shown on its own, not as part of the 100%.</dd>
+<dt>Set</dt><dd>A beach volleyball match is best of three sets. Sets 1 and 2 go to 21 points, a deciding Set 3 goes to 15. That is why Set 3 has fewer attacks, and only some matches have one.</dd>
+<dt>Team, Player, Country</dt><dd>A team is a pair of two players. Player 1 and Player 2 follow the official shirt numbers (#1, #2). The country is the three-letter code in brackets after the team name, e.g. (Nor) = Norway.</dd>
+<dt>Counted by player or for the team</dt><dd>Some sets were counted for each player separately, others only for the team as a whole. Team-only sets are included in all team totals, but they cannot appear when you filter by a player.</dd>
+<dt>Attack and defense side</dt><dd>Points and outs belong to the attacking team. Digs and block touches are made by the defending team against that attack. So when you select a team, its digged and blocked attacks are the ones the <em>opponent</em> stopped. What the team itself did in defense is shown in “Defense of the selection” and in the ranking.</dd>
+<dt>Rates</dt><dd>Attack rates are shares of the team's own attacks. Defense rates (dig, block) are shares of the attacks the team faced from its opponents in the same sets.</dd>
+</dl></section>
+<section class="card"><h2>Matches included<button class="tg" data-f="mlist">show</button></h2><div id="mlist" class="fold"></div></section>
+</main>
+<aside><section class="card"><h2>Team ranking</h2>
+<p class="hint" id="rkhint"></p>
+<div class="seg" id="rkm"><button data-m="att" class="on">Attack</button><button data-m="dig">Dig</button><button data-m="blk">Block</button></div>
+<p class="hint" id="rkdesc" style="margin-bottom:10px"></p>
+<ol class="rk" id="rk"></ol></section></aside>
+</div><div id="tip"></div>
+<script>
+const D={"matches": [{"id": "2026-05-31 Ostrava Semifinal", "series": "Elite 16", "location": "Ostrava", "date": "2026-05-31", "bracket": "Semifinal", "teamA": "C. Younousse/A. Tijan (Qat)", "teamB": "D. \u00c5hman/J. Hellvig (Swe)", "playersA": ["Cherif Younousse", "Ahmed Tijan"], "playersB": ["David \u00c5hman", "Jonatan Hellvig"]}, {"id": "2026-04-11 Saquarema Quarterfinal", "series": "Elite 16", "location": "Saquarema", "date": "2026-04-11", "bracket": "Quarterfinals", "teamA": "D. \u00c5hman/J. Hellvig (Swe)", "teamB": "R. Daubas/C. Aye (Fra)", "playersA": ["David \u00c5hman", "Jonatan Hellvig"], "playersB": ["R\u00e9mi Daubas", "Calvin Aye"]}, {"id": "2026-08-23 Montreal Gold", "series": "Elite 16", "location": "Montreal", "date": "2026-08-23", "bracket": "Gold Match", "teamA": "A. Mol/C. S\u00f8rum (Nor)", "teamB": "A. Loyola/R. Lima (Bra)", "playersA": ["Anders Mol", "Christian S\u00f8rum"], "playersB": ["Andr\u00e9 Loyola", "Renato Lima"]}, {"id": "2026-08-23 Montreal Semifinal", "series": "Elite 16", "location": "Montreal", "date": "2026-08-23", "bracket": "Semifinal", "teamA": "A. Mol/C. S\u00f8rum (Nor)", "teamB": "H. Mol/M. Berntsen (Nor)", "playersA": ["Anders Mol", "Christian S\u00f8rum"], "playersB": ["Hendrik Mol", "Mathias Berntsen"]}, {"id": "2026-08-09 Hamburg Semifinal", "series": "Elite 16", "location": "Hamburg", "date": "2026-08-09", "bracket": "Semifinal", "teamA": "N. Ehlers/L. W\u00fcst (Ger)", "teamB": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "playersA": ["Nils Ehlers", "Lui W\u00fcst"], "playersB": ["M\u0101rti\u0146\u0161 P\u013cavi\u0146\u0161", "Kristians Fo\u010derots"]}, {"id": "2026-08-09 Hamburg Gold", "series": "Elite 16", "location": "Hamburg", "date": "2026-08-09", "bracket": "Gold Match", "teamA": "N. Ehlers/L. W\u00fcst (Ger)", "teamB": "A. Mol/C. S\u00f8rum (Nor)", "playersA": ["Nils Ehlers", "Lui W\u00fcst"], "playersB": ["Anders Mol", "Christian S\u00f8rum"]}], "records": [{"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 1, "counted": "player", "player": "Cherif Younousse", "attacks": 11, "points": 8, "blocks": 4, "digs": 0, "out": 1}, {"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 1, "counted": "player", "player": "Ahmed Tijan", "attacks": 2, "points": 2, "blocks": 0, "digs": 0, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 2, "counted": "player", "player": "Cherif Younousse", "attacks": 15, "points": 8, "blocks": 2, "digs": 1, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 2, "counted": "player", "player": "Ahmed Tijan", "attacks": 7, "points": 6, "blocks": 0, "digs": 2, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 3, "counted": "player", "player": "Cherif Younousse", "attacks": 3, "points": 3, "blocks": 4, "digs": 1, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "C. Younousse/A. Tijan (Qat)", "set": 3, "counted": "player", "player": "Ahmed Tijan", "attacks": 4, "points": 2, "blocks": 0, "digs": 1, "out": 1}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 1, "counted": "player", "player": "David \u00c5hman", "attacks": 6, "points": 5, "blocks": 0, "digs": 2, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 1, "counted": "player", "player": "Jonatan Hellvig", "attacks": 10, "points": 9, "blocks": 5, "digs": 0, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 2, "counted": "player", "player": "David \u00c5hman", "attacks": 6, "points": 4, "blocks": 0, "digs": 2, "out": 1}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 2, "counted": "player", "player": "Jonatan Hellvig", "attacks": 13, "points": 8, "blocks": 4, "digs": 0, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 3, "counted": "player", "player": "David \u00c5hman", "attacks": 5, "points": 2, "blocks": 0, "digs": 0, "out": 0}, {"match": "2026-05-31 Ostrava Semifinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 3, "counted": "player", "player": "Jonatan Hellvig", "attacks": 7, "points": 4, "blocks": 1, "digs": 0, "out": 0}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 1, "counted": "player", "player": "David \u00c5hman", "attacks": 10, "points": 5, "blocks": 0, "digs": 1, "out": 2}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 1, "counted": "player", "player": "Jonatan Hellvig", "attacks": 16, "points": 14, "blocks": 6, "digs": 0, "out": 0}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 2, "counted": "player", "player": "David \u00c5hman", "attacks": 11, "points": 5, "blocks": 0, "digs": 2, "out": 1}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "D. \u00c5hman/J. Hellvig (Swe)", "set": 2, "counted": "player", "player": "Jonatan Hellvig", "attacks": 8, "points": 7, "blocks": 6, "digs": 0, "out": 0}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "R. Daubas/C. Aye (Fra)", "set": 1, "counted": "player", "player": "R\u00e9mi Daubas", "attacks": 7, "points": 7, "blocks": 6, "digs": 0, "out": 0}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "R. Daubas/C. Aye (Fra)", "set": 1, "counted": "player", "player": "Calvin Aye", "attacks": 17, "points": 11, "blocks": 0, "digs": 1, "out": 2}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "R. Daubas/C. Aye (Fra)", "set": 2, "counted": "player", "player": "R\u00e9mi Daubas", "attacks": 9, "points": 7, "blocks": 4, "digs": 1, "out": 1}, {"match": "2026-04-11 Saquarema Quarterfinal", "team": "R. Daubas/C. Aye (Fra)", "set": 2, "counted": "player", "player": "Calvin Aye", "attacks": 14, "points": 6, "blocks": 0, "digs": 2, "out": 0}, {"match": "2026-08-23 Montreal Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 1, "counted": "team", "player": null, "attacks": 25, "points": 15, "blocks": 3, "digs": 6, "out": 0}, {"match": "2026-08-23 Montreal Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 2, "counted": "team", "player": null, "attacks": 23, "points": 15, "blocks": 8, "digs": 4, "out": 2}, {"match": "2026-08-23 Montreal Gold", "team": "A. Loyola/R. Lima (Bra)", "set": 1, "counted": "team", "player": null, "attacks": 25, "points": 13, "blocks": 5, "digs": 5, "out": 3}, {"match": "2026-08-23 Montreal Gold", "team": "A. Loyola/R. Lima (Bra)", "set": 2, "counted": "team", "player": null, "attacks": 22, "points": 12, "blocks": 1, "digs": 5, "out": 0}, {"match": "2026-08-23 Montreal Semifinal", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 1, "counted": "player", "player": "Anders Mol", "attacks": 8, "points": 5, "blocks": 9, "digs": 0, "out": 0}, {"match": "2026-08-23 Montreal Semifinal", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 1, "counted": "player", "player": "Christian S\u00f8rum", "attacks": 11, "points": 4, "blocks": 0, "digs": 5, "out": 0}, {"match": "2026-08-23 Montreal Semifinal", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 2, "counted": "player", "player": "Anders Mol", "attacks": 3, "points": 2, "blocks": 6, "digs": 0, "out": 0}, {"match": "2026-08-23 Montreal Semifinal", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 2, "counted": "player", "player": "Christian S\u00f8rum", "attacks": 11, "points": 8, "blocks": 0, "digs": 4, "out": 0}, {"match": "2026-08-23 Montreal Semifinal", "team": "H. Mol/M. Berntsen (Nor)", "set": 1, "counted": "player", "player": "Hendrik Mol", "attacks": 13, "points": 3, "blocks": 5, "digs": 0, "out": 2}, {"match": "2026-08-23 Montreal Semifinal", "team": "H. Mol/M. Berntsen (Nor)", "set": 1, "counted": "player", "player": "Mathias Berntsen", "attacks": 13, "points": 5, "blocks": 0, "digs": 4, "out": 3}, {"match": "2026-08-23 Montreal Semifinal", "team": "H. Mol/M. Berntsen (Nor)", "set": 2, "counted": "player", "player": "Hendrik Mol", "attacks": 12, "points": 5, "blocks": 1, "digs": 0, "out": 1}, {"match": "2026-08-23 Montreal Semifinal", "team": "H. Mol/M. Berntsen (Nor)", "set": 2, "counted": "player", "player": "Mathias Berntsen", "attacks": 8, "points": 4, "blocks": 0, "digs": 3, "out": 1}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 1, "counted": "player", "player": "Nils Ehlers", "attacks": 11, "points": 6, "blocks": 4, "digs": 0, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 1, "counted": "player", "player": "Lui W\u00fcst", "attacks": 10, "points": 3, "blocks": 0, "digs": 4, "out": 1}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 2, "counted": "player", "player": "Nils Ehlers", "attacks": 9, "points": 4, "blocks": 3, "digs": 2, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 2, "counted": "player", "player": "Lui W\u00fcst", "attacks": 18, "points": 9, "blocks": 0, "digs": 6, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 3, "counted": "player", "player": "Nils Ehlers", "attacks": 9, "points": 6, "blocks": 2, "digs": 2, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 3, "counted": "player", "player": "Lui W\u00fcst", "attacks": 7, "points": 2, "blocks": 0, "digs": 1, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 1, "counted": "player", "player": "M\u0101rti\u0146\u0161 P\u013cavi\u0146\u0161", "attacks": 11, "points": 4, "blocks": 0, "digs": 3, "out": 1}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 1, "counted": "player", "player": "Kristians Fo\u010derots", "attacks": 8, "points": 5, "blocks": 8, "digs": 1, "out": 1}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 2, "counted": "player", "player": "M\u0101rti\u0146\u0161 P\u013cavi\u0146\u0161", "attacks": 18, "points": 7, "blocks": 0, "digs": 5, "out": 4}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 2, "counted": "player", "player": "Kristians Fo\u010derots", "attacks": 8, "points": 3, "blocks": 6, "digs": 2, "out": 0}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 3, "counted": "player", "player": "M\u0101rti\u0146\u0161 P\u013cavi\u0146\u0161", "attacks": 12, "points": 6, "blocks": 0, "digs": 5, "out": 3}, {"match": "2026-08-09 Hamburg Semifinal", "team": "M. P\u013cavi\u0146\u0161/K. Fo\u010derots (Lat)", "set": 3, "counted": "player", "player": "Kristians Fo\u010derots", "attacks": 5, "points": 4, "blocks": 4, "digs": 0, "out": 0}, {"match": "2026-08-09 Hamburg Gold", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 1, "counted": "player", "player": "Nils Ehlers", "attacks": 11, "points": 5, "blocks": 9, "digs": 1, "out": 1}, {"match": "2026-08-09 Hamburg Gold", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 1, "counted": "player", "player": "Lui W\u00fcst", "attacks": 17, "points": 11, "blocks": 0, "digs": 5, "out": 0}, {"match": "2026-08-09 Hamburg Gold", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 2, "counted": "player", "player": "Nils Ehlers", "attacks": 8, "points": 7, "blocks": 8, "digs": 2, "out": 0}, {"match": "2026-08-09 Hamburg Gold", "team": "N. Ehlers/L. W\u00fcst (Ger)", "set": 2, "counted": "player", "player": "Lui W\u00fcst", "attacks": 10, "points": 4, "blocks": 0, "digs": 2, "out": 0}, {"match": "2026-08-09 Hamburg Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 1, "counted": "player", "player": "Anders Mol", "attacks": 15, "points": 6, "blocks": 8, "digs": 2, "out": 1}, {"match": "2026-08-09 Hamburg Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 1, "counted": "player", "player": "Christian S\u00f8rum", "attacks": 14, "points": 5, "blocks": 0, "digs": 4, "out": 1}, {"match": "2026-08-09 Hamburg Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 2, "counted": "player", "player": "Anders Mol", "attacks": 7, "points": 6, "blocks": 7, "digs": 0, "out": 0}, {"match": "2026-08-09 Hamburg Gold", "team": "A. Mol/C. S\u00f8rum (Nor)", "set": 2, "counted": "player", "player": "Christian S\u00f8rum", "attacks": 12, "points": 1, "blocks": 0, "digs": 2, "out": 0}], "built": "2026-11-08"};
+const $=id=>document.getElementById(id);
+// Derived fields: country = code in brackets at the end of the team name; opp = opponent in that match.
+const opp={};D.matches.forEach(m=>{opp[m.id+'|'+m.teamA]=m.teamB;opp[m.id+'|'+m.teamB]=m.teamA});
+D.records.forEach(r=>{r.country=(r.team.match(/\(([^)]+)\)\s*$/)||[])[1]||'?';r.opp=opp[r.match+'|'+r.team];r.key=r.match+'|'+r.set+'|'+r.team;r.okey=r.match+'|'+r.set+'|'+r.opp});
+// Team-set totals (all rows of a team in one set). blocks/digs = that team's DEFENSE against the opponent's attacks.
+const TS={};D.records.forEach(r=>{const t=TS[r.key]||(TS[r.key]={attacks:0,points:0,blocks:0,digs:0,out:0});['attacks','points','blocks','digs','out'].forEach(k=>t[k]+=r[k])});
+const DIMS=[['set','Set',r=>'Set '+r.set],['country','Country',r=>r.country],['team','Team',r=>r.team],['player','Player',r=>r.player]];
+const sel=Object.fromEntries(DIMS.map(d=>[d[0],new Set()]));
+const pass=(r,skip)=>DIMS.every(([k,,f])=>(Array.isArray(skip)?skip.includes(k):k===skip)||!sel[k].size||sel[k].has(f(r)));
+// option order: sets 1-3, countries A-Z, teams A-Z, players grouped by team (player 1 first)
+const OPTS={};DIMS.forEach(([k,,f])=>{const v=[];D.records.forEach(r=>{const x=f(r);if(x&&!v.includes(x))v.push(x)});OPTS[k]=v});
+['set','country','team'].forEach(k=>OPTS[k].sort((a,b)=>a.localeCompare(b)));
+const pTeam={};D.records.forEach(r=>{if(r.player&&!pTeam[r.player])pTeam[r.player]=r.team});
+const pIdx={};D.matches.forEach(m=>[...m.playersA,...m.playersB].forEach((p,i)=>{if(p&&pIdx[p]===undefined)pIdx[p]=i%2}));
+OPTS.player.sort((a,b)=>pTeam[a].localeCompare(pTeam[b])||pIdx[a]-pIdx[b]);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct=(x,n)=>n?(100*x/n).toFixed(1)+'%':'–';
+const tip=$('tip');
+let rkMode='att';
+const RK={att:['Attack','Successful attacks','Points ÷ own attacks. How often the team’s attacks won the rally directly.','points','attacks','var(--points)'],
+ dig:['Dig','Successful digs','Controlled digs ÷ opponent attacks faced. How often the team saved an opponent attack well enough to play on.','digs','faced','var(--digs)'],
+ blk:['Block','Block touches','Block touches ÷ opponent attacks faced. How often the blocker got a hand on an opponent attack. The outcome after the touch is open: it can still be a point for either side.','blocks','faced','var(--block)']};
+
+function render(){
+ // ---- filter chips with cross-filter counts
+ $('filters').innerHTML=DIMS.map(([k,label,f])=>{
+  const cnt={};D.records.forEach(r=>{if(pass(r,k)){const x=f(r);if(x)cnt[x]=(cnt[x]||0)+r.attacks}});
+  return `<div class="frow"><div class="fl">${label}</div><div class="chips">`+OPTS[k].map(v=>{const on=sel[k].has(v),c=cnt[v]||0;
+   return `<button class="chip${on?' on':''}" data-k="${k}" data-v="${esc(v)}"${!on&&!c?' disabled':''}>${esc(v)}<small>${c}</small></button>`}).join('')+'</div></div>'}).join('');
+ // ---- selection
+ const R=D.records.filter(r=>pass(r)),byP=sel.player.size>0,any=DIMS.some(d=>sel[d[0]].size);
+ const S=k=>R.reduce((a,r)=>a+r[k],0);
+ const A=S('attacks'),P=S('points'),O=S('out');
+ const keys=[...new Set(R.map(r=>r.key))];
+ const okeys=keys.map(k=>R.find(x=>x.key===k).okey);
+ // attack view: digs/blocks against these attacks come from the OPPONENT's defense in the same set (team level only)
+ const G=byP?null:okeys.reduce((a,k)=>a+(TS[k]?TS[k].digs:0),0),B=byP?null:okeys.reduce((a,k)=>a+(TS[k]?TS[k].blocks:0),0);
+ const other=Math.max(0,A-P-O-(G||0));
+ const pc=x=>pct(x,A);
+ $('h1').textContent='Attack outcomes – '+(any?'filtered':'all matches');
+ $('fsum').textContent=any?'– '+DIMS.filter(d=>sel[d[0]].size).map(d=>[...sel[d[0]]].join(' or ')).join(' · '):'– none, showing all data. Filter by set, country, team or player.';
+ $('reset').style.display=any?'':'none';
+ const nm=new Set(R.map(r=>r.match)).size,ns=new Set(R.map(r=>r.match+'|'+r.set)).size;
+ const tsAll=keys.length,tsP=keys.filter(k=>R.find(r=>r.key===k).counted==='player').length;
+ // team-only sets of the selected players' teams are invisible in the player view – say so
+ const teamOnly=byP?new Set(D.records.filter(r=>r.counted==='team'&&pass(r,'player')&&[...sel.player].some(p=>pTeam[p]===r.team)).map(r=>r.key)).size:0;
+ $('sub').textContent=`${nm} match${nm==1?'':'es'} · ${ns} set${ns==1?'':'s'} · ${A} attacks · ${tsP} of ${tsAll} team-sets counted per player`+
+  (teamOnly?` · ${teamOnly} set${teamOnly==1?'':'s'} of this team were counted for the team only and are missing in the player view`:'')+` · data from ${D.built}`;
+ const seg=byP?[['Point','points',P,'var(--points)','The attack won the rally directly'],['Out','out',O,'var(--out)','The attacker hit the ball out'],['Dug, blocked or other','other',A-P-O,'var(--other)','The rest: digs and blocks are counted per defender, not per attacker, so they cannot be split up for one player']]
+  :[['Point','points',P,'var(--points)','The attack won the rally directly'],['Dug (controlled)','digs',G,'var(--digs)','The other team’s defense saved the attack well enough to play on'],['Out','out',O,'var(--out)','The attacker hit the ball out'],['Other outcome','other',other,'var(--other)','Neither point, controlled dig nor out: blocked straight down, softblock, overpass, scrambled save, etc']];
+ // heading follows the filter: player > team > country, then set
+ const CN={Bra:'Brazil',Fra:'France',Ger:'Germany',Lat:'Latvia',Nor:'Norway',Qat:'Qatar',Swe:'Sweden',Usa:'the USA',Ned:'the Netherlands',Cze:'Czechia',Pol:'Poland',Aut:'Austria',Esp:'Spain',Ita:'Italy',Sui:'Switzerland',Can:'Canada',Aus:'Australia',Chi:'Chile',Arg:'Argentina'};
+ const or=a=>a.length<3?a.join(' or '):a.slice(0,-1).join(', ')+' or '+a[a.length-1];
+ const who2=sel.player.size?'of '+or([...sel.player]):sel.team.size?'of '+or([...sel.team]):sel.country.size?'of teams from '+or([...sel.country].map(c=>CN[c]||c)):'in professional beach volleyball';
+ $('pieh').textContent=`What happens to an attack ${who2}${sel.set.size?' in '+or([...sel.set]):''}?`;
+ $('barhint').textContent=byP?'Each attack has exactly one outcome, so the parts add up to 100% of the player’s attacks. With a player filter only points and outs can be shown separately (see “Dug, blocked or other”).'
+  :'Each attack has exactly one outcome, so the parts add up to 100% of the attacks. Hover over a slice for the exact numbers.';
+ // pie chart: slices clockwise from 12 o'clock, in the same order as the legend
+ let a0=0;const pt=a=>`${Math.sin(a).toFixed(4)} ${(-Math.cos(a)).toFixed(4)}`;
+ $('pie').innerHTML=!A?'<circle r="1" fill="var(--grid)"></circle>':seg.filter(s=>s[2]>0).map(s=>{const f=s[2]/A,t=`data-t="${esc(s[0])}: ${s[2]} of ${A} attacks (${pc(s[2])}). ${esc(s[4])}"`;
+  if(f>=0.9999)return `<circle r="1" fill="${s[3]}" ${t}></circle>`;
+  const a1=a0+2*Math.PI*f,d=`M0 0 L${pt(a0)} A1 1 0 ${f>0.5?1:0} 1 ${pt(a1)} Z`;a0=a1;return `<path d="${d}" fill="${s[3]}" ${t}></path>`}).join('');
+ $('legend').innerHTML=`<div class="tot"><b>${A}</b> attacks${byP?' by '+(sel.player.size==1?esc([...sel.player][0]):'the selected players'):''} <span class="d">– attacking hits over the net, e.g. spikes and shots</span></div>`+
+  (!A?'<span class="hint">No attacks in this combination.</span>':seg.map(s=>`<span class="nm"><span class="sw" style="background:${s[3]}"></span>${s[0]}</span><span class="v">${pc(s[2])}</span><span class="c">${s[2]} of ${A}</span><span class="d">${esc(s[4])}</span>`).join(''));
+ $('blk').style.width=(byP||!A?0:100*B/A)+'%';
+ $('blkt').textContent=byP?'Not available with a player filter: block touches are counted for the blocking player, not for the attacker.':`${B} of ${A} attacks (${pc(B)}) were touched by the block.`;
+ // ---- defense card: what the selected team(s)/player(s) did against the opponents' attacks in the same sets
+ const oA=okeys.reduce((a,k)=>a+(TS[k]?TS[k].attacks:0),0),dG=S('digs'),dB=S('blocks');
+ const who=byP?(sel.player.size==1?[...sel.player][0]:'the selected players'):(any?'the selected teams':'all teams');
+ $('defhint').textContent=byP?`The other side of the game: how many attacks the opponents made in the same sets, and how many of them ${who} dug in a controlled way or touched at the block. All opponent attacks count here, also those the partner defended.`
+  :`The other side of the game: how many attacks the opponents made in the same sets, and how many of them ${who} dug in a controlled way or touched at the block.`+(any?'':' Without a filter this is the same as the attack view, just seen from the defense.');
+ $('def').innerHTML=[['Opponent attacks faced',oA,null,'var(--ink2)'],['Dug (controlled) by '+who,pct(dG,oA),dG,'var(--digs)'],['Block touches by '+who,pct(dB,oA),dB,'var(--block)']]
+  .map(t=>`<div><div class="l"><span class="sw" style="background:${t[3]}"></span>${esc(t[0])}</div><div class="n">${t[1]}</div>`+
+   (t[2]===null?'':`<div class="hint" style="margin:0">${t[2]} of ${oA}</div><div class="meter" style="margin-top:6px"><div style="width:${oA?100*t[2]/oA:0}%;background:${t[3]}"></div></div>`)+'</div>').join('');
+ // ---- table
+ $('tbl').innerHTML='<table><tr><th>Outcome</th><th>Count</th><th>Share</th></tr>'+
+  [...seg.map(s=>[s[0],s[2]]),['Block touch (separate)',byP?'n/a':B],['Attacks total',A]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[0]=='Attacks total'||r[1]==='n/a'?'':pc(r[1])+' of attacks'}</td></tr>`).join('')+
+  `<tr><td>Opponent attacks faced</td><td>${oA}</td><td></td></tr><tr><td>Dug (controlled) by selection</td><td>${dG}</td><td>${pct(dG,oA)} of opp. attacks</td></tr><tr><td>Block touches by selection</td><td>${dB}</td><td>${pct(dB,oA)} of opp. attacks</td></tr></table>`;
+ renderRank();
+}
+// ---- team ranking: uses the Set and Country filters; Team/Player selections are highlighted instead of hiding the other teams
+function renderRank(){
+ const [,title,desc,num,den,col]=RK[rkMode];
+ const T={};D.records.forEach(r=>{if(!pass(r,['team','player']))return;
+  const t=T[r.team]||(T[r.team]={team:r.team,attacks:0,points:0,digs:0,blocks:0,keys:new Set()});
+  ['attacks','points','digs','blocks'].forEach(k=>t[k]+=r[k]);t.keys.add(r.okey)});
+ const L=Object.values(T).map(t=>{t.faced=[...t.keys].reduce((a,k)=>a+(TS[k]?TS[k].attacks:0),0);t.rate=t[den]?t[num]/t[den]:0;return t}).sort((a,b)=>b.rate-a.rate||b[den]-a[den]);
+ const hl=new Set([...sel.team,...[...sel.player].map(p=>pTeam[p])]);
+ const scope=[sel.set.size?[...sel.set].join(' or '):'all sets',sel.country.size?[...sel.country].join(' or '):null].filter(Boolean).join(', ');
+ $('rkhint').textContent=`Teams compared by one key figure (${scope}). Pick the figure below. Click a team to filter the page by it.`;
+ $('rkdesc').innerHTML=`<b>${title}:</b> ${desc}`;
+ const max=Math.max(...L.map(t=>t.rate),0.0001);let rank=0,prev=null;
+ $('rk').innerHTML=L.length?L.map((t,i)=>{if(t.rate!==prev){rank=i+1;prev=t.rate}
+  return `<li class="${hl.has(t.team)?'on':''}" data-team="${esc(t.team)}" title="${esc(t.team)}: ${t[num]} of ${t[den]}"><span class="p">${rank}</span><span class="t">${esc(t.team)}</span><span class="v">${pct(t[num],t[den])}</span>`+
+   `<span class="m"><span class="meter"><div style="width:${100*t.rate/max}%;background:${col}"></div></span><span>${t[num]} of ${t[den]}</span></span></li>`}).join('')
+  :'<li class="hint">No teams with data for this selection.</li>';
+}
+// selection lives in the URL hash (#team=…&set=Set 1|Set 2) so a view can be bookmarked
+const save=()=>{try{history.replaceState(null,'','#'+DIMS.filter(d=>sel[d[0]].size).map(d=>d[0]+'='+encodeURIComponent([...sel[d[0]]].join('|'))).join('&'))}catch(e){}};
+try{location.hash.slice(1).split('&').forEach(p=>{const[k,v]=p.split('=');if(sel[k]&&v)decodeURIComponent(v).split('|').forEach(x=>OPTS[k].includes(x)&&sel[k].add(x))})}catch(e){}
+$('filters').onclick=e=>{const b=e.target.closest('.chip');if(!b||b.disabled)return;const s=sel[b.dataset.k],v=b.dataset.v;s.has(v)?s.delete(v):s.add(v);save();render()};
+$('reset').onclick=()=>{DIMS.forEach(d=>sel[d[0]].clear());save();render()};
+// filter section is folded by default; the summary next to the heading shows what is active
+$('ftgl').onclick=()=>{const b=$('fbody'),o=b.style.display!='block';b.style.display=o?'block':'none';$('ftgl').textContent=o?'hide filters':'show filters';$('ftgl').setAttribute('aria-expanded',o)};
+$('rk').onclick=e=>{const li=e.target.closest('li[data-team]');if(!li)return;const v=li.dataset.team;
+ if(sel.team.has(v))sel.team.delete(v);else{sel.team.add(v);[...sel.player].forEach(p=>{if(!sel.team.has(pTeam[p]))sel.player.delete(p)})}save();render()};
+$('rkm').onclick=e=>{const b=e.target.closest('button');if(!b)return;rkMode=b.dataset.m;[...$('rkm').children].forEach(x=>x.classList.toggle('on',x===b));renderRank()};
+$('pie').onmousemove=e=>{const t=e.target.dataset&&e.target.dataset.t;tip.style.display=t?'block':'none';if(t){tip.textContent=t;tip.style.left=Math.min(e.clientX+12,innerWidth-330)+'px';tip.style.top=e.clientY+12+'px'}};
+$('pie').onmouseleave=()=>tip.style.display='none';
+document.querySelectorAll('.tg').forEach(b=>b.onclick=()=>{const t=$(b.dataset.f);const s=t.style.display!='block';t.style.display=s?'block':'none';b.textContent=s?'hide':'show'});
+$('mlist').innerHTML='<table><tr><th>Date</th><th>Event</th><th>Round</th><th>Teams</th></tr>'+[...D.matches].sort((a,b)=>String(a.date).localeCompare(String(b.date)))
+ .map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(m.series||'')} ${esc(m.location||'')}</td><td>${esc(m.bracket||'')}</td><td>${esc(m.teamA)} vs ${esc(m.teamB)}</td></tr>`).join('')+'</table>';
+render();
+</script></body></html>
