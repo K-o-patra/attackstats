@@ -629,12 +629,11 @@
                 touch
               </dt>
               <dd>
-                A block touch means the blocker clearly touched the attack. Very
-                slight touches that don't change anything are not counted; this
-                is the judgement of the person who counted the matches. If the
-                attacker deliberately hits the ball off the blocker's hands so
-                that it goes out, that is not counted as a block either. The aim
-                is to count only blocks that had a real chance to win the point
+                A block touch means the blocker clearly changed the trajectory
+                of the attack. Very slight touches, or if the attacker
+                deliberately hits the ball off the blocker's fingertips so that
+                it goes out, that is not counted as a block either. The aim is
+                to count only blocks that had a real chance to win the point
                 directly, or to keep the ball in play as a soft block. The
                 outcome after the touch can still be anything, so it is shown on
                 its own, not as part of the 100%.
@@ -761,13 +760,13 @@
        const dh=`The other side of the game: the opponents made ${oA} attacks in the same sets, and this is how many of them ${who} dug in a controlled way or touched at the block.`;
        $('defhint').textContent=byP?dh+' All opponent attacks count here, also those the partner defended.'
         :dh+(any?'':' Without a filter this is the same as the attack view, just seen from the defense.');
-       $('def').innerHTML=[['Dug (controlled) by '+who,pct(dG,oA),dG,'var(--digs)'],['Block touches by '+who,pct(dB,oA),dB,'var(--block)']]
+       $('def').innerHTML=[['Dug (controlled) by '+who,pct(dG,oA),dG,'var(--digs)'],['Block touches (see definition) by '+who,pct(dB,oA),dB,'var(--block)']]
         .map(t=>`<div><div class="l"><span class="sw" style="background:${t[3]}"></span>${esc(t[0])}</div><div class="n">${t[1]}</div>`+
          (t[2]===null?'':`<div class="hint" style="margin:0">${t[2]} of ${oA}</div><div class="meter" style="margin-top:6px"><div style="width:${oA?100*t[2]/oA:0}%;background:${t[3]}"></div></div>`)+'</div>').join('');
        // ---- table
        $('tbl').innerHTML='<table><tr><th>Outcome</th><th>Count</th><th>Share</th></tr>'+
         [...seg.map(s=>[s[0],s[2]]),['Block touch (separate)',byP?'n/a':B],['Attacks total',A]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[0]=='Attacks total'||r[1]==='n/a'?'':pc(r[1])+' of attacks'}</td></tr>`).join('')+
-        `<tr><td>Opponent attacks faced</td><td>${oA}</td><td></td></tr><tr><td>Dug (controlled) by selection</td><td>${dG}</td><td>${pct(dG,oA)} of opp. attacks</td></tr><tr><td>Block touches by selection</td><td>${dB}</td><td>${pct(dB,oA)} of opp. attacks</td></tr></table>`;
+        `<tr><td>Opponent attacks faced</td><td>${oA}</td><td></td></tr><tr><td>Dug (controlled) by selection</td><td>${dG}</td><td>${pct(dG,oA)} of opp. attacks</td></tr><tr><td>Block touches (see definition) by selection</td><td>${dB}</td><td>${pct(dB,oA)} of opp. attacks</td></tr></table>`;
        renderRank();
       }
       // ---- team ranking: uses the Set and Country filters; Team/Player selections are highlighted instead of hiding the other teams
