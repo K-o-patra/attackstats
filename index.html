@@ -82,6 +82,9 @@
         display: none;
       }
       @media (max-width: 980px) {
+        .brand2 {
+          text-align: center;
+        }
         .page {
           display: flex;
           flex-direction: column;
@@ -119,7 +122,13 @@
         font-weight: 800;
         letter-spacing: -0.02em;
         line-height: 1.15;
-        margin: 0 0 14px;
+        margin: 0;
+      }
+      .brand2 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink2);
+        margin: 2px 0 14px;
       }
       h1 {
         font-size: 22px;
@@ -508,12 +517,56 @@
         white-space: nowrap;
         font-variant-numeric: tabular-nums;
       }
+      .tm {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 0 7px;
+        border-radius: 999px;
+        background: hsl(var(--h) 45% 92%);
+        color: hsl(var(--h) 45% 24%);
+      }
+      @media (prefers-color-scheme: dark) {
+        .tm {
+          background: hsl(var(--h) 25% 21%);
+          color: hsl(var(--h) 45% 84%);
+        }
+      }
+      .vs {
+        color: var(--ink2);
+        margin: 0 6px;
+      }
+      .teams.stack .tm,
+      .teams.stack .vs {
+        display: table;
+        margin: 2px 0;
+      }
+      #mlist th,
+      #mlist td {
+        text-align: left;
+        vertical-align: top;
+      }
+      #mlist {
+        overflow-x: auto;
+      }
+      @media (max-width: 600px) {
+        #mlist table {
+          font-size: 13px;
+        }
+        #mlist th,
+        #mlist td {
+          padding: 6px 4px;
+        }
+        .tm {
+          padding: 0 5px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="page">
       <header>
-        <p class="brand">Beach Volleyball, Hit by Hit</p>
+        <p class="brand">Beach Volleyball</p>
+        <p class="brand2">Attack Statistics</p>
       </header>
       <main>
         <section class="card">
@@ -799,8 +852,17 @@
       $('piebox').onmousemove=e=>{const t=e.target.dataset&&e.target.dataset.t;tip.style.display=t?'block':'none';if(t){tip.textContent=t;tip.style.left=Math.min(e.clientX+12,innerWidth-330)+'px';tip.style.top=e.clientY+12+'px'}};
       $('piebox').onmouseleave=()=>tip.style.display='none';
       document.querySelectorAll('.tg').forEach(b=>b.onclick=()=>{const t=$(b.dataset.f);const s=t.style.display!='block';t.style.display=s?'block':'none';b.textContent=s?'hide':'show'});
-      $('mlist').innerHTML='<table><tr><th>Date</th><th>Event</th><th>Round</th><th>Teams</th></tr>'+[...D.matches].sort((a,b)=>String(a.date).localeCompare(String(b.date)))
-       .map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(m.series||'')} ${esc(m.location||'')}</td><td>${esc(m.bracket||'')}</td><td>${esc(m.teamA)} vs ${esc(m.teamB)}</td></tr>`).join('')+'</table>';
+      // match list: newest first (same day: later round first), date spelled out, team A and team B in two fixed colours
+      const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const fdate=d=>{const m=String(d||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?+m[3]+' '+MON[m[2]-1]+' '+m[1]:String(d||'')};
+      const RND=['Gold Match','Bronze Match','Semifinal','Quarterfinal'];const rnd=b=>{const i=RND.indexOf(b);return i<0?99:i};
+      const tm=(t,h)=>`<span class="tm" style="--h:${h}">${esc(t)}</span>`;
+      $('mlist').innerHTML='<table><tr><th>Event</th><th>Location</th><th>Round</th><th>Teams</th><th>Date</th></tr>'+[...D.matches].sort((a,b)=>String(b.date).localeCompare(String(a.date))||rnd(a.bracket)-rnd(b.bracket))
+       .map(m=>`<tr><td>${esc(m.series||'')}</td><td>${esc(m.location||'')}</td><td>${esc(m.bracket||'')}</td><td><span class="teams">${tm(m.teamA,210)}<span class="vs">vs</span>${tm(m.teamB,35)}</span></td><td>${esc(fdate(m.date))}</td></tr>`).join('')+'</table>';
+      // "vs" gets its own line when the two teams do not fit on one line (checked again whenever the list changes width)
+      let mlW=-1;const stackTeams=()=>{const w=$('mlist').clientWidth;if(w===mlW)return;mlW=w;const T=[...$('mlist').querySelectorAll('.teams')];
+       T.forEach(t=>t.classList.remove('stack'));T.forEach(t=>{const x=t.children;if(x[0].offsetTop!==x[2].offsetTop)t.classList.add('stack')})};
+      if(window.ResizeObserver)new ResizeObserver(stackTeams).observe($('mlist'));else addEventListener('resize',stackTeams);
       render();
     </script>
   </body>
